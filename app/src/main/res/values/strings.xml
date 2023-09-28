@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CalculadoraSimplesKotlin</string>
+    <string name="invalid_expression_message">Invalid expression</string>
+    <string name="title_activity_main2">MainActivity</string>
+</resources>
