@@ -83,13 +83,13 @@ class CalculadoraViewModel : ViewModel() {
     }
 
     fun onCalculateResult() {
-        val currentExpression: String? = validateExpression(mCurrentExpression.value)
+        var currentExpression: String? = validateExpression(mCurrentExpression.value)
         if (currentExpression == null) {
             showInvalidExpressionMessage()
         } else {
             clearLastValueIfItIsAnOperator()
 
-            mCurrentExpression.value =
+            currentExpression=
                 currentExpression.replace(percentage.toRegex(), "/100")
 
             val expression = Expression(currentExpression)
