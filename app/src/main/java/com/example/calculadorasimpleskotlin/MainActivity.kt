@@ -1,6 +1,7 @@
 package com.example.calculadorasimpleskotlin
 
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -10,30 +11,39 @@ import com.example.calculadorasimpleskotlin.ui.theme.CalculadoraSimplesKotlinThe
 
 
 class MainActivity : ComponentActivity() {
-    private var viewModel: CalculadoraViewModel? = null
+    private val sharedPreferences by lazy {
+        getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
+    }
+
+    private val viewModel: CalculadoraViewModel by viewModels {
+        CalculadoraViewModelFactory(this, sharedPreferences)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = viewModels<CalculadoraViewModel>().value
-
         viewModel.apply {
-            this?.getInvalidExpressionMessageEvent()?.observe(this@MainActivity) { shouldShow ->
+            getInvalidExpressionMessageEvent().observe(this@MainActivity) { shouldShow ->
                 if (shouldShow != null && shouldShow) {
-                    this@MainActivity.showInvalidExpressionMessage()
+                    showInvalidExpressionMessage()
                 }
             }
         }
 
+        val sharedPreferences = getPreferences(Context.MODE_PRIVATE)
+        val savedExpression = sharedPreferences.getString("currentExpression", null)
+
         setContent {
-            CalculadoraSimplesKotlinTheme{
+            CalculadoraSimplesKotlinTheme {
                 CalculatorScreen(viewModel)
             }
         }
     }
 
-    private fun showInvalidExpressionMessage(): Unit =
+    private fun showInvalidExpressionMessage() {
         Toast.makeText(this, getString(R.string.invalid_expression_message), Toast.LENGTH_SHORT)
             .show()
+    }
 }
+
 

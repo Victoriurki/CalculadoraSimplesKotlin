@@ -27,7 +27,6 @@ import com.example.calculadorasimpleskotlin.ui.theme.NumberTeal
 
 
 @Composable
-@Preview(device = Devices.PIXEL_4, backgroundColor = 0xFFFFFFFF, showBackground = true)
 fun CalculatorScreen(viewModel: CalculadoraViewModel? = null) {
     val currentExpression = viewModel?.getCurrentExpression()?.observeAsState()?.value
     val result = viewModel?.getResult()?.observeAsState()?.value
@@ -42,12 +41,10 @@ fun CalculatorScreen(viewModel: CalculadoraViewModel? = null) {
     }
 }
 
+
+
 @Composable
-@Preview(device = Devices.PIXEL_4, backgroundColor = 0xFFFFFFFF, showBackground = true)
-private fun InputAreaUI(
-    currentExpression: String? = "20 x 10 + 50",
-    result: String? = "250"
-) {
+private fun InputAreaUI(currentExpression: String? = null, result: String? = null) {
     Column(
         modifier = Modifier
             .background(InputGray)
@@ -73,6 +70,7 @@ private fun InputAreaUI(
         )
     }
 }
+
 
 @Composable
 @Preview

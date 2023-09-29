@@ -1,5 +1,9 @@
 package com.example.calculadorasimpleskotlin
 
+
+import android.content.Context
+import android.content.SharedPreferences
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,20 +12,39 @@ import java.math.BigDecimal
 import java.util.Locale
 import kotlin.math.roundToInt
 
-class CalculadoraViewModel : ViewModel() {
+class CalculadoraViewModel(private val context: Context, private val sharedPreferences: SharedPreferences) : ViewModel() {
 
     private val mCurrentExpression = MutableLiveData<String>()
     private val mResult = MutableLiveData<String>()
-
     private var isNumberPositive = true
-
     private val stringComma = "."
     private val percentage = "%"
     private val scientificNotationChar = "E"
     private val infinity = "Infinity"
     private val validOperators: List<String> = listOf("+", "-", "/", "*")
-
     private val mInvalidExpressionMessageEvent = SingleLiveEvent<Boolean>()
+
+    init {
+        // Load the saved expression from SharedPreferences here
+        val savedExpression = sharedPreferences.getString("currentExpression", "")
+        mCurrentExpression.postValue(savedExpression)
+    }
+
+
+    private fun saveCurrentExpression(expression: String) {
+        sharedPreferences.edit().putString("currentExpression", expression).apply()
+        showToast("Expression saved")
+    }
+
+    // Define a showToast function to display the Toast message
+    private fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun loadCurrentExpression() {
+        val expression = sharedPreferences.getString("currentExpression", "")
+        mCurrentExpression.postValue(expression)
+    }
 
     fun getInvalidExpressionMessageEvent(): SingleLiveEvent<Boolean> {
         return mInvalidExpressionMessageEvent
@@ -89,8 +112,10 @@ class CalculadoraViewModel : ViewModel() {
         } else {
             clearLastValueIfItIsAnOperator()
 
-            currentExpression=
+            currentExpression =
                 currentExpression.replace(percentage.toRegex(), "/100")
+
+            saveCurrentExpression(currentExpression) // Save the currentExpression here
 
             val expression = Expression(currentExpression)
 
