@@ -12,7 +12,11 @@ import com.google.firebase.auth.FirebaseUser
 class LoginActivity : ComponentActivity() {
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
+    private lateinit var registerEmailEditText: EditText
+    private lateinit var registerPasswordEditText: EditText
+    private lateinit var confirmPasswordEditText: EditText
     private lateinit var loginButton: Button
+    private lateinit var registerButton: Button
     private lateinit var auth: FirebaseAuth
 
 
@@ -24,7 +28,11 @@ class LoginActivity : ComponentActivity() {
 
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
+        registerEmailEditText = findViewById(R.id.registerEmailEditText)
+        registerPasswordEditText=findViewById(R.id.registerPasswordEditText)
+        confirmPasswordEditText=findViewById(R.id.confirmPasswordEditText)
         loginButton = findViewById(R.id.loginButton)
+        registerButton=findViewById(R.id.registerButton)
 
         auth = FirebaseAuth.getInstance()
 
@@ -36,6 +44,18 @@ class LoginActivity : ComponentActivity() {
                 loginUser(email, password)
             } else {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        registerButton.setOnClickListener {
+            val email = registerEmailEditText.text.toString()
+            val password = registerPasswordEditText.text.toString()
+            val confirmPassword = confirmPasswordEditText.text.toString()
+
+            if (email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty() && password == confirmPassword) {
+                registerUser(email, password)
+            } else {
+                Toast.makeText(this, "Preencha todos os campos e verifique a senha", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -51,6 +71,21 @@ class LoginActivity : ComponentActivity() {
                     finish()
                 } else {
                     Toast.makeText(this, "Falha no login. Verifique suas credenciais.", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+    private fun registerUser(email: String, password: String) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val user: FirebaseUser? = auth.currentUser
+                    Toast.makeText(this, "Cadastro bem-sucedido para ${user?.email}", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(this, "Falha no cadastro. Verifique suas credenciais.", Toast.LENGTH_SHORT).show()
                 }
             }
     }
