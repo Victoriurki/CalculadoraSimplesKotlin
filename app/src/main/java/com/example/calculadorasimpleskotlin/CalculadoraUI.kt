@@ -49,6 +49,7 @@ fun CalculatorScreen(viewModel: CalculadoraViewModel? = null) {
 
 @Composable
 private fun InputAreaUI(currentExpression: String? = null, result: String? = null) {
+    val auth = FirebaseAuth.getInstance()
     Column(
         modifier = Modifier
             .background(InputGray)
@@ -74,12 +75,11 @@ private fun InputAreaUI(currentExpression: String? = null, result: String? = nul
         )
         Button(
             onClick = {
-                val auth = FirebaseAuth.getInstance()
-                auth.signOut()
+
             },
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(text = "Logout")
+            Text(text = "${auth.currentUser?.email}")
         }
     }
 }
