@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.example.calculadorasimpleskotlin.ui.theme.CalculadoraSimplesKotlinTheme
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 
 class MainActivity : ComponentActivity() {
@@ -29,7 +30,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         val sharedPreferences = getPreferences(Context.MODE_PRIVATE)
         val savedExpression = sharedPreferences.getString("currentExpression", null)
 

@@ -6,6 +6,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
@@ -23,6 +24,7 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
+        val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         setContentView(R.layout.activity_login)
 
@@ -36,12 +38,19 @@ class LoginActivity : ComponentActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        fun logFirebaseAnalyticsEvent(eventName: String) {
+            val bundle = Bundle()
+            bundle.putString("event_name", eventName)
+            firebaseAnalytics.logEvent("custom_event", bundle)
+        }
+
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 loginUser(email, password)
+                logFirebaseAnalyticsEvent("login_button_click")
             } else {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
             }
@@ -54,10 +63,12 @@ class LoginActivity : ComponentActivity() {
 
             if (email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty() && password == confirmPassword) {
                 registerUser(email, password)
+                logFirebaseAnalyticsEvent("register_button_click")
             } else {
                 Toast.makeText(this, "Preencha todos os campos e verifique a senha", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
     private fun loginUser(email: String, password: String) {
@@ -89,4 +100,5 @@ class LoginActivity : ComponentActivity() {
                 }
             }
     }
+
 }
