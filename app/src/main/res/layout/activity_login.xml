@@ -5,9 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context="LoginActivity">
 
-
+    <!-- Email EditText -->
     <EditText
         android:id="@+id/emailEditText"
         android:layout_width="0dp"
@@ -16,10 +17,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:padding="12dp" />
+        android:layout_marginTop="32dp"
+        android:padding="16dp"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:background="#F0F0F0"
+        android:inputType="textEmailAddress"
+        android:drawablePadding="8dp"/>
+<!--        android:drawableStart="@drawable/ic_email" -->
 
-    <!-- Campo de entrada de senha -->
+    <!-- Password EditText -->
     <EditText
         android:id="@+id/passwordEditText"
         android:layout_width="0dp"
@@ -28,103 +35,96 @@
         app:layout_constraintTop_toBottomOf="@+id/emailEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        android:padding="12dp"
-        android:inputType="textPassword" />
+        android:layout_marginTop="16dp"
+        android:padding="16dp"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:background="#F0F0F0"
+        android:inputType="textPassword"
+        android:drawablePadding="8dp"/>
+<!--        android:drawableStart="@drawable/ic_password" -->
 
-    <!-- Botão de login -->
-
+    <!-- Login Button -->
     <Button
         android:id="@+id/loginButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="24dp"
         android:background="#0077B6"
-        android:padding="12dp"
+        android:padding="16dp"
         android:text="Login"
         android:textColor="#ffffff"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
 
-    <TextView
-        android:id="@+id/emailInfoTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="260dp"
-        android:text="E-mail: victor.iurki@gmail.com"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.081"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/passwordInfoTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Senha: 123456"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.052"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailInfoTextView" />
-
+    <!-- Registration Views -->
     <EditText
         android:id="@+id/registerEmailEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="420dp"
+        android:layout_marginTop="24dp"
         android:hint="E-mail de registro"
-        android:padding="12dp"
+        android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/loginButton"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:background="#F0F0F0"
+        android:inputType="textEmailAddress"
+        android:drawablePadding="8dp"/>
+<!--        android:drawableStart="@drawable/ic_email" -->
 
     <EditText
         android:id="@+id/registerPasswordEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="416dp"
+        android:layout_marginTop="16dp"
         android:hint="Senha de registro"
         android:inputType="textPassword"
-        android:padding="12dp"
+        android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/registerEmailEditText"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:background="#F0F0F0"
+        android:drawablePadding="8dp"/>
+<!--        android:drawableStart="@drawable/ic_password" -->
 
     <EditText
         android:id="@+id/confirmPasswordEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="424dp"
+        android:layout_marginTop="16dp"
         android:hint="Confirme sua senha de registro"
         android:inputType="textPassword"
-        android:padding="12dp"
+        android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/registerPasswordEditText"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:background="#F0F0F0"
+        android:drawablePadding="8dp"/>
+<!--        android:drawableStart="@drawable/ic_password" -->
+
 
     <Button
         android:id="@+id/registerButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="380dp"
+        android:layout_marginTop="24dp"
         android:background="#34A853"
-        android:padding="12dp"
+        android:padding="16dp"
         android:text="Registrar"
         android:textColor="#ffffff"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginButton" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmPasswordEditText" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
