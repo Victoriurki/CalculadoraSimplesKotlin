@@ -7,14 +7,17 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.udojava.evalex.Expression
 import java.math.BigDecimal
 import java.util.Locale
 import kotlin.math.roundToInt
 
-class CalculadoraViewModel(private val context: Context, private val sharedPreferences: SharedPreferences) : ViewModel() {
+class CalculadoraViewModel(private val context: Context, private val db: FirebaseFirestore) : ViewModel() {
 
-    private val mCurrentExpression = MutableLiveData<String>()
+    private val mCurrentExpression = MutableLiveData<String?>()
     private val mResult = MutableLiveData<String>()
     private var isNumberPositive = true
     private val stringComma = "."
@@ -23,17 +26,64 @@ class CalculadoraViewModel(private val context: Context, private val sharedPrefe
     private val infinity = "Infinity"
     private val validOperators: List<String> = listOf("+", "-", "/", "*")
     private val mInvalidExpressionMessageEvent = SingleLiveEvent<Boolean>()
+    private val resultDocument: DocumentReference
+        get() = db.collection("results").document("currentResult")
+    private var expressionListenerRegistration: ListenerRegistration? = null
 
     init {
-        // Load the saved expression from SharedPreferences here
-        val savedExpression = sharedPreferences.getString("currentExpression", "")
-        mCurrentExpression.postValue(savedExpression)
+        loadCurrentExpressionFromFirestore()
+        registerExpressionChangeListener()
+    }
+
+    private fun loadCurrentExpressionFromFirestore() {
+        resultDocument.get()
+            .addOnSuccessListener { document ->
+                val expression = document?.getString("expression")
+                mCurrentExpression.postValue(expression)
+            }
+            .addOnFailureListener {
+                showToast("Failed to load expression")
+            }
     }
 
 
-    private fun saveCurrentExpression(expression: String) {
-        sharedPreferences.edit().putString("currentExpression", expression).apply()
-        showToast("Expression saved")
+    private fun saveCurrentExpressionToFirestore(expression: String) {
+        resultDocument.set(mapOf("expression" to expression))
+            .addOnSuccessListener {
+                showToast("Expression saved")
+            }
+            .addOnFailureListener {
+                showToast("Failed to save expression")
+            }
+    }
+
+    private fun saveCurrentResultToFirestore(result: String) {
+        resultDocument.update("result", result)
+            .addOnSuccessListener {
+                showToast("Result saved")
+            }
+            .addOnFailureListener {
+                showToast("Failed to save result")
+            }
+    }
+
+    private fun registerExpressionChangeListener() {
+        expressionListenerRegistration = resultDocument.addSnapshotListener { snapshot, exception ->
+            if (exception != null) {
+                showToast("Error listening to expression changes")
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val expression = snapshot.getString("expression")
+                mCurrentExpression.postValue(expression)
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        expressionListenerRegistration?.remove()
     }
 
     // Define a showToast function to display the Toast message
@@ -41,16 +91,13 @@ class CalculadoraViewModel(private val context: Context, private val sharedPrefe
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun loadCurrentExpression() {
-        val expression = sharedPreferences.getString("currentExpression", "")
-        mCurrentExpression.postValue(expression)
-    }
+
 
     fun getInvalidExpressionMessageEvent(): SingleLiveEvent<Boolean> {
         return mInvalidExpressionMessageEvent
     }
 
-    fun getCurrentExpression(): LiveData<String> {
+    fun getCurrentExpression(): MutableLiveData<String?> {
         return mCurrentExpression
     }
 
@@ -115,8 +162,6 @@ class CalculadoraViewModel(private val context: Context, private val sharedPrefe
             currentExpression =
                 currentExpression.replace(percentage.toRegex(), "/100")
 
-            saveCurrentExpression(currentExpression) // Save the currentExpression here
-
             val expression = Expression(currentExpression)
 
             val bigDecimalResult: BigDecimal
@@ -137,7 +182,8 @@ class CalculadoraViewModel(private val context: Context, private val sharedPrefe
                 } else {
                     doubleResult.toString()
                 }
-
+            saveCurrentExpressionToFirestore(currentExpression)
+            saveCurrentResultToFirestore(stringResult)
             mResult.postValue(stringResult)
         }
     }

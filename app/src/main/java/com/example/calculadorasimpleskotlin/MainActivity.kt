@@ -9,15 +9,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.example.calculadorasimpleskotlin.ui.theme.CalculadoraSimplesKotlinTheme
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 
 class MainActivity : ComponentActivity() {
-    private val sharedPreferences by lazy {
-        getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
-    }
+    private val db: FirebaseFirestore = Firebase.firestore
 
     private val viewModel: CalculadoraViewModel by viewModels {
-        CalculadoraViewModelFactory(this, sharedPreferences)
+        CalculadoraViewModelFactory(this, db)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,8 +32,7 @@ class MainActivity : ComponentActivity() {
             }
         }
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-        val sharedPreferences = getPreferences(Context.MODE_PRIVATE)
-        val savedExpression = sharedPreferences.getString("currentExpression", null)
+
 
         setContent {
             CalculadoraSimplesKotlinTheme {

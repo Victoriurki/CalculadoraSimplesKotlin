@@ -1,6 +1,7 @@
 package com.example.calculadorasimpleskotlin
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -9,6 +10,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : ComponentActivity() {
     private lateinit var emailEditText: EditText
@@ -19,6 +21,7 @@ class LoginActivity : ComponentActivity() {
     private lateinit var loginButton: Button
     private lateinit var registerButton: Button
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +40,7 @@ class LoginActivity : ComponentActivity() {
         registerButton=findViewById(R.id.registerButton)
 
         auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         fun logFirebaseAnalyticsEvent(eventName: String) {
             val bundle = Bundle()
@@ -77,6 +81,7 @@ class LoginActivity : ComponentActivity() {
                 if (task.isSuccessful) {
                     val user: FirebaseUser? = auth.currentUser
                     Toast.makeText(this, "Login bem-sucedido como ${user?.email}", Toast.LENGTH_SHORT).show()
+                    saveUserIdToFirestore(user?.uid)
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
@@ -92,6 +97,7 @@ class LoginActivity : ComponentActivity() {
                 if (task.isSuccessful) {
                     val user: FirebaseUser? = auth.currentUser
                     Toast.makeText(this, "Cadastro bem-sucedido para ${user?.email}", Toast.LENGTH_SHORT).show()
+                    saveUserIdToFirestore(user?.uid)
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
@@ -99,6 +105,19 @@ class LoginActivity : ComponentActivity() {
                     Toast.makeText(this, "Falha no cadastro. Verifique suas credenciais.", Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    private fun saveUserIdToFirestore(userId: String?) {
+        if (userId != null) {
+            val userDocRef = db.collection("users").document(userId)
+            userDocRef.set(mapOf("userId" to userId))
+                .addOnSuccessListener {
+                    Log.d("LoginActivity", "UserID saved to Firestore")
+                }
+                .addOnFailureListener {
+                    Log.e("LoginActivity", "Failed to save UserID to Firestore", it)
+                }
+        }
     }
 
 }
